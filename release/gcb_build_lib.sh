@@ -100,15 +100,21 @@ function parse_result_file {
 }
 
 function run_build() {
-  local MFEST_URL=$1
-  local MFEST_FILE=$2
-  local MFEST_VER=$3
-  local TEMPLATE_NAME=$4
-  local SUBS_FILE=$5
-  local PROJ_ID=$6
-  local SERVICE_ACCT=$7
-  local SERVICE_KEY_FILE=$8
-  local WAIT=$9
+  # local MFEST_URL=$1
+  # local MFEST_FILE=$2
+  # local MFEST_VER=$3
+  # local TEMPLATE_NAME=$4
+  # local SUBS_FILE=$5
+  # local PROJ_ID=$6
+  # local SERVICE_ACCT=$7
+  # local SERVICE_KEY_FILE=$8
+  # local WAIT=$9
+  local TEMPLATE_NAME=$1
+  local SUBS_FILE=$2
+  local PROJ_ID=$3
+  local SERVICE_ACCT=$4
+  local SERVICE_KEY_FILE=$5
+  local WAIT=$6
   
   local REQUEST_FILE="$(mktemp /tmp/build.request.XXXX)"
   local RESULT_FILE="$(mktemp /tmp/build.response.XXXX)"

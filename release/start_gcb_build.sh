@@ -46,9 +46,9 @@ function usage() {
     -a        service account for login                         (optional, defaults to project's cloudbuild@ )
     -k <file> path to key file for service account              (optional)
     -v <ver>  version string                                    (optional, defaults to $VER_STRING )
-    -u <url>  URL to git repo with manifest file                (required)
-    -m <file> name of manifest file in repo specified by -u     (optional, defaults to $REPO_FILE )
-    -t <tag>  commit tag or branch for manifest repo in -u      (optional, defaults to $REPO_FILE_VER )
+    # -u <url>  URL to git repo with manifest file                (required)
+    # -m <file> name of manifest file in repo specified by -u     (optional, defaults to $REPO_FILE )
+    # -t <tag>  commit tag or branch for manifest repo in -u      (optional, defaults to $REPO_FILE_VER )
     -w        specify that script should wait until build done  (optional)
 
     -r <name> GCR bucket/path to store build artifacts          (required)
@@ -60,12 +60,12 @@ while getopts a:k:m:p:r:s:t:u:v:w arg ; do
   case "${arg}" in
     a) SVC_ACCT="${OPTARG}";;
     k) KEY_FILE_PATH="${OPTARG}";;
-    m) REPO_FILE="${OPTARG}";;
+    # m) REPO_FILE="${OPTARG}";;
     p) PROJECT_ID="${OPTARG}";;
     r) GCR_PATH="${OPTARG}";;
     s) GCS_PATH="${OPTARG}";;
-    t) REPO_FILE_VER="${OPTARG}";;
-    u) REPO="${OPTARG}";;
+    # t) REPO_FILE_VER="${OPTARG}";;
+    # u) REPO="${OPTARG}";;
     v) VER_STRING="${OPTARG}";;
     w) WAIT_FOR_RESULT="true";;
     *) usage;;
@@ -73,9 +73,9 @@ while getopts a:k:m:p:r:s:t:u:v:w arg ; do
 done
 
 [[ -z "${PROJECT_ID}"    ]] && usage
-[[ -z "${REPO}"          ]] && usage
-[[ -z "${REPO_FILE}"     ]] && usage
-[[ -z "${REPO_FILE_VER}" ]] && usage
+# [[ -z "${REPO}"          ]] && usage
+# [[ -z "${REPO_FILE}"     ]] && usage
+# [[ -z "${REPO_FILE_VER}" ]] && usage
 [[ -z "${VER_STRING}"    ]] && usage
 
 [[ -z "${GCS_PATH}" ]] && usage
@@ -91,15 +91,15 @@ fi
 cat << EOF > ${SUBS_FILE}
   "substitutions": {
     "_VER_STRING": "${VER_STRING}",
-    "_MFEST_URL": "${REPO}",
-    "_MFEST_FILE": "${REPO_FILE}",
-    "_MFEST_VER": "${REPO_FILE_VER}",
     "_GCS_PATH": "${GCS_PATH}",
     "_GCR_PATH": "${GCR_PATH}"
   }
 EOF
 
-run_build "${REPO}" "${REPO_FILE}" "${REPO_FILE_VER}" "cloud_build.template.json" \
+# run_build "${REPO}" "${REPO_FILE}" "${REPO_FILE_VER}" "cloud_build.template.json" \
+#   "${SUBS_FILE}" "${PROJECT_ID}" "${SVC_ACCT}" "${KEY_FILE_PATH}" "${WAIT_FOR_RESULT}"
+
+run_build "cloud_build.template.json" \
   "${SUBS_FILE}" "${PROJECT_ID}" "${SVC_ACCT}" "${KEY_FILE_PATH}" "${WAIT_FOR_RESULT}"
 
 # cleanup
