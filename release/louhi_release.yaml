@@ -1,0 +1,50 @@
+substitutions:
+#  _REV: "master"
+#  _GCS_PATH: ""
+#  _GCR_PATH: ""
+#  _VER_STRING: ""
+  _REV_ISTIO: "master"
+  _GCR_PATH: "local-istio-build" # this is FOO in gcr.io/FOO (the script prepends "gcr.io/" to it)
+  _GCS_PATH: "local-istio-build"
+timeout: '3600s'
+options:
+  machineType: N1_HIGHCPU_8
+tags:
+- 'istio'
+- 'release'
+steps:
+  # clone all repos into the correct paths (this is what the repo tool does for us)
+  - name: gcr.io/google-containers/addon-builder
+    entrypoint: checkout
+    volumes:
+    - name: buildoutput
+      path: /output
+    args:
+    - "https://github.com/istio/istio"
+    - "--dir"
+    - "/workspace/go/src/istio.io/istio"
+    - "--rev"
+    - "${_REV_ISTIO}"
+
+  - name: gcr.io/istio-testing/istio-builder
+    dir: /workspace/go/src/istio.io/istio
+    entrypoint: bash
+    volumes:
+    - name: buildoutput
+      path: /output
+    args:
+    - "-c"
+    - |
+      ./release/cloud_builder.sh -p "$_GCS_PATH" -q "$_GCR_PATH" -o /output
+      df -h
+  # ...but we are "docker load"-ing proxyv2 and pushing it to GCR as well here
+  - name: gcr.io/istio-testing/istio-builder
+    dir: /workspace/go/src/istio.io/istio
+    entrypoint: bash
+    volumes:
+    - name: buildoutput
+      path: /output
+    args:
+    - "-c"
+    - |
+      ./release/store_artifacts.sh -p "$_GCS_PATH" -q "$_GCR_PATH" -i $BUILD_ID -o /output
